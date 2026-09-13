@@ -97,15 +97,21 @@ class SocialLoginController extends Controller
     }
 
     /**
-     * OAuth callback URL for a provider. Derived from the current request host so one
-     * instance works across every apex/domain it serves (each apex's callback must be
-     * registered with the provider). Config-cache-safe — resolved per request, not at
-     * config load. OIDC_REDIRECT_URL pins a single URL when set.
+     * OAuth callback URL for a provider.
+     *
+     * A redirect the operator configured for the provider wins — that stays proxy-immune
+     * and honours non-standard callback paths, so no existing setup regresses. Otherwise
+     * the URL is derived from the current request host, so one instance serves every
+     * apex/domain it answers on with no per-domain configuration (each apex's callback
+     * must be registered with the provider; the derive path expects TrustProxies to be
+     * set when running behind a reverse proxy). Resolved per request, so config:cache-safe.
      */
     protected function callbackUrl(string $provider): string
     {
-        if ($provider === 'openidconnect' && ! empty($override = env('OIDC_REDIRECT_URL'))) {
-            return $override;
+        $configured = config('services.'.$provider.'.redirect');
+
+        if (! empty($configured) && $configured !== 'http://example.com/callback-url') {
+            return $configured;
         }
 
         return url('/social-auth/'.$provider.'/callback');
