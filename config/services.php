@@ -54,8 +54,9 @@ return [
     // Generic OpenID Connect (socialiteproviders/openidconnect), driver "openidconnect".
     // Points at any OIDC issuer via discovery ({OIDC_ISSUER}/.well-known/openid-configuration).
     // Every id_token is validated (signature/iss/aud/azp/exp/nonce/at_hash) with PKCE and
-    // automatic JWKS key-rotation. The redirect defaults to this app's callback and only
-    // needs OIDC_REDIRECT_URL for split-horizon/proxied deployments where APP_URL differs.
+    // automatic JWKS key-rotation. The redirect below is only a config-load fallback:
+    // SocialLoginController sets it per request from the current host so one instance works
+    // across every apex it serves. Set OIDC_REDIRECT_URL to pin a single redirect instead.
     'openidconnect' => [
         'base_url'                 => env('OIDC_ISSUER'),
         'client_id'                => env('OIDC_CLIENT_ID'),

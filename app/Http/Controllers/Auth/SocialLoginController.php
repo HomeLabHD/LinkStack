@@ -13,13 +13,19 @@ class SocialLoginController extends Controller
 {
     public function redirectToProvider(String $provider)
     {
-        return \Socialite::driver($provider)->redirect();
+        return \Socialite::driver($provider)
+            ->redirectUrl($this->callbackUrl($provider))
+            ->redirect();
     }
 
     public function providerCallback(String $provider)
     {
         try {
-            $social_user = \Socialite::driver($provider)->user();
+            // Same redirect_uri as the outbound leg — OAuth requires the value at token
+            // exchange to match the one sent at authorization.
+            $social_user = \Socialite::driver($provider)
+                ->redirectUrl($this->callbackUrl($provider))
+                ->user();
 
             // 1) Primary identity match is the immutable provider subject id (OIDC `sub`),
             //    never the email — an email can be reassigned upstream and must not be a
@@ -88,6 +94,21 @@ class SocialLoginController extends Controller
         } catch (\Throwable $e) {
             return redirect()->route('login')->withErrors($e->getMessage());
         }
+    }
+
+    /**
+     * OAuth callback URL for a provider. Derived from the current request host so one
+     * instance works across every apex/domain it serves (each apex's callback must be
+     * registered with the provider). Config-cache-safe — resolved per request, not at
+     * config load. OIDC_REDIRECT_URL pins a single URL when set.
+     */
+    protected function callbackUrl(string $provider): string
+    {
+        if ($provider === 'openidconnect' && ! empty($override = env('OIDC_REDIRECT_URL'))) {
+            return $override;
+        }
+
+        return url('/social-auth/'.$provider.'/callback');
     }
 
     /**
