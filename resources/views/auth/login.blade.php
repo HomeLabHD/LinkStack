@@ -102,6 +102,13 @@ foreach($pages as $page)
                       </a>
                     </li>
                     @endif
+                    @if(!empty(env('OIDC_CLIENT_ID')))
+                    <li class="list-group-item border-0 pb-0">
+                      <a href="{{ route('social.redirect','openidconnect') }}" title="{{ env('OIDC_NAME', 'OpenID Connect') }}">
+                        <i class="bi bi-shield-lock"></i>
+                      </a>
+                    </li>
+                    @endif
                   </ul>
                 </div>
                 @else

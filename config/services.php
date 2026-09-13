@@ -51,4 +51,19 @@ return [
         'redirect' => 'http://example.com/callback-url',
     ],
 
+    // Generic OpenID Connect (socialiteproviders/openidconnect), driver "openidconnect".
+    // Points at any OIDC issuer via discovery ({OIDC_ISSUER}/.well-known/openid-configuration).
+    // Every id_token is validated (signature/iss/aud/azp/exp/nonce/at_hash) with PKCE and
+    // automatic JWKS key-rotation. The redirect defaults to this app's callback and only
+    // needs OIDC_REDIRECT_URL for split-horizon/proxied deployments where APP_URL differs.
+    'openidconnect' => [
+        'base_url'                 => env('OIDC_ISSUER'),
+        'client_id'                => env('OIDC_CLIENT_ID'),
+        'client_secret'            => env('OIDC_CLIENT_SECRET'),
+        'redirect'                 => env('OIDC_REDIRECT_URL', rtrim((string) env('APP_URL'), '/').'/social-auth/openidconnect/callback'),
+        'scopes'                   => env('OIDC_SCOPES', 'openid profile email'),
+        'require_email'            => filter_var(env('OIDC_REQUIRE_EMAIL', false), FILTER_VALIDATE_BOOLEAN),
+        'post_logout_redirect_uri' => env('OIDC_POST_LOGOUT_REDIRECT_URL', env('APP_URL')),
+    ],
+
 ];

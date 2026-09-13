@@ -145,6 +145,9 @@ Route::get('/studio/linkparamform_part/{typeid}/{linkid}', [LinkTypeViewControll
 }
 
 //Social login route
+// RP-initiated logout landing — registered before the {provider} routes so it isn't
+// swallowed by the generic /social-auth/{provider}/callback match.
+Route::get('/social-auth/logout/callback', [SocialLoginController::class, 'logoutCallback'])->name('social.logout.callback');
 Route::get('/social-auth/{provider}/callback', [SocialLoginController::class, 'providerCallback']);
 Route::get('/social-auth/{provider}', [SocialLoginController::class, 'redirectToProvider'])->name('social.redirect');
 
