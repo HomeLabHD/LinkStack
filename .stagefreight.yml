@@ -1,0 +1,89 @@
+# ------------------------------------------------------------------------------
+# GENERATED / ENFORCED BY STAGEFREIGHT GOVERNANCE
+# Source repo: PrPlanIT/MaintenancePolicy
+# Profile: hlhd-docker
+# This .stagefreight.yml is governed, not purely local.
+# To disable governance, detach from the control repo workflow.
+# Manual changes may be overwritten by reconciliation.
+# ------------------------------------------------------------------------------
+
+version: 1
+builds:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/build-docker.yml
+scribe:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/scribe-docker.yml
+lint:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/lint-generic.yml
+security:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/security.yml
+dependency:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/dependency.yml
+commit:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/commit.yml
+release:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/release.yml
+manifest:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/manifest.yml
+build_cache:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/build_cache.yml
+ci:
+  forge:
+    - gitlab
+  image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
+forges:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/forges.yml
+git:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/git.yml
+metadata:
+  category: applications
+  description:
+    - Self-hosted link-in-bio page — showcase all your links on your own server.
+    - Container image for LinkStack, the self-hosted link-in-bio / personal-profile platform (Laravel), built on Alpine + Apache + PHP 8.3 as the non-root apache user, with generic OpenID Connect SSO against any discovery-based issuer.
+  license: AGPL-3.0
+  org: HomeLabHD
+  title: LinkStack
+  topics:
+    - linkstack
+    - linktree
+    - link-in-bio
+    - php
+    - laravel
+    - oidc
+    - sso
+orgs:
+  HomeLabHD:
+    aliases:
+      docker: hlhd
+      ghcr: homelabhd
+      github: HomeLabHD
+      handle: hlhd
+    maintainer: HomeLabHD <homelabhelp@gmail.com>
+publish:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/publish-docker.yml
+registries:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/registries.yml
+repos:
+  github-mirror:
+    forge: github
+    project: HomeLabHD/LinkStack
+    roles:
+      - mirror
+      - publish-origin
+    sync:
+      git: true
+      releases: true
+  primary:
+    branches:
+      default: main
+    forge: gitlab
+    project: HomeLabHD/LinkStack
+    roles:
+      - primary
+    worktree: .
+stencils:
+  presets:
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-status.yml
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-docker.yml
+toolchains:
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains.yml
