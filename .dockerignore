@@ -1,0 +1,14 @@
+.git
+.github
+.gitattributes
+.gitignore
+.editorconfig
+.styleci.yml
+.stagefreight
+node_modules
+tests
+phpunit.xml
+*.md
+.env
+.env.*
+!.env.example
