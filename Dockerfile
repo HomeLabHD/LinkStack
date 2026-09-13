@@ -9,7 +9,7 @@
 # dependencies (including the OpenID Connect provider) are resolved at build time.
 
 # ---- Stage 1: Composer dependencies ------------------------------------------------
-FROM composer:2 AS vendor
+FROM composer:2.10.3 AS vendor
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN composer install \
  && rm -rf /app/.git /app/.docker /app/Dockerfile /app/.dockerignore
 
 # ---- Stage 2: Runtime --------------------------------------------------------------
-FROM alpine:3.23.2
+FROM alpine:3.24.1
 
 LABEL org.opencontainers.image.title="LinkStack" \
       org.opencontainers.image.description="LinkStack (HomeLabHD fork) — Alpine/Apache/PHP, non-root, with generic OIDC SSO." \

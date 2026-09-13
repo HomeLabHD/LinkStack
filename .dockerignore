@@ -12,3 +12,18 @@ phpunit.xml
 .env
 .env.*
 !.env.example
+
+# Never let credentials or key material leak into the build context / image.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*_rsa
+*_ed25519
+.aws
+.kube
+.ssh
+.netrc
+.npmrc
+.pypirc
