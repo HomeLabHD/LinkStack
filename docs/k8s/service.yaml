@@ -1,0 +1,14 @@
+# ClusterIP: terminate TLS at your ingress or gateway and route to port 80 here, then set
+# HTTPS_SERVER_NAME on the StatefulSet to the public hostname.
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkstack
+spec:
+  type: ClusterIP
+  selector:
+    app: linkstack
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

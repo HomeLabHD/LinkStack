@@ -1,0 +1,49 @@
+# LinkStack with MariaDB. For a personal instance the database service can be dropped
+# entirely — LinkStack falls back to SQLite inside the volume.
+services:
+  linkstack:
+    image: docker.io/hlhd/linkstack:latest
+    container_name: linkstack
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      # The name users actually reach. LinkStack builds absolute URLs from it, so a
+      # mismatch surfaces as broken links and failed redirects after login.
+      HTTPS_SERVER_NAME: links.example.com
+      HTTP_SERVER_NAME: links.example.com
+      SERVER_ADMIN: admin@example.com
+      TZ: Etc/UTC
+      PUID: "1000"
+      PGID: "1000"
+      LOG_LEVEL: warn
+      PHP_MEMORY_LIMIT: 256M
+      UPLOAD_MAX_FILESIZE: 8M
+    volumes:
+      # Database, uploads, themes and config all live here. This is the backup target.
+      - linkstack:/htdocs
+    depends_on:
+      linkstack-db:
+        condition: service_healthy
+
+  linkstack-db:
+    image: docker.io/mariadb:11
+    container_name: linkstack-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: linkstack
+      MARIADB_USER: linkstack
+      MARIADB_PASSWORD: change-me
+      MARIADB_ROOT_PASSWORD: change-me-too
+      TZ: Etc/UTC
+    volumes:
+      - linkstack-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  linkstack:
+  linkstack-db:

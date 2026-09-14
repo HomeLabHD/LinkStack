@@ -1,0 +1,69 @@
+# Minimal LinkStack StatefulSet. A StatefulSet rather than a Deployment because the whole
+# instance — database, uploads, themes, config — lives on one volume that must not be
+# shared or recreated between replicas.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: linkstack
+spec:
+  replicas: 1
+  serviceName: linkstack
+  selector:
+    matchLabels:
+      app: linkstack
+  template:
+    metadata:
+      labels:
+        app: linkstack
+    spec:
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: linkstack
+          image: docker.io/hlhd/linkstack:latest
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            # The hostname users actually reach — LinkStack builds absolute URLs from it.
+            - name: HTTPS_SERVER_NAME
+              value: links.example.com
+            - name: HTTP_SERVER_NAME
+              value: links.example.com
+            - name: TZ
+              value: Etc/UTC
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: LOG_LEVEL
+              value: warn
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: htdocs
+              mountPath: /htdocs
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: htdocs
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 5Gi
