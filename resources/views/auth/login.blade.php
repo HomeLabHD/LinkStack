@@ -72,6 +72,17 @@ foreach($pages as $page)
                 </div>
                 @if(env('ENABLE_SOCIAL_LOGIN') == 'true')
                 <p class="text-center my-3">{{__('messages.or sign in with other accounts?')}}</p>
+                {{-- A named provider gets the conventional full-width button; unnamed it stays an
+                     icon in the row below, which is how the built-in providers present. --}}
+                @if(!empty(env('OIDC_CLIENT_ID')) && !empty(env('OIDC_LABEL')))
+                <div class="d-grid my-3">
+                  <a href="{{ route('social.redirect','openidconnect') }}"
+                     class="btn btn-outline-primary"
+                     aria-label="{{ env('OIDC_NAME', 'OpenID Connect') }}">
+                    <i class="bi {{ env('OIDC_ICON', 'bi-shield-lock') }} me-1"></i>{{ env('OIDC_LABEL') }}
+                  </a>
+                </div>
+                @endif
                 <div class="d-flex justify-content-center">
                   <ul class="list-group list-group-horizontal list-group-flush">
                     @if(!empty(env('FACEBOOK_CLIENT_ID')))
@@ -102,7 +113,7 @@ foreach($pages as $page)
                       </a>
                     </li>
                     @endif
-                    @if(!empty(env('OIDC_CLIENT_ID')))
+                    @if(!empty(env('OIDC_CLIENT_ID')) && empty(env('OIDC_LABEL')))
                     {{-- Identity providers vary, so the presentation is configurable and every default
                          reproduces the previous icon-only button:
                            OIDC_NAME   tooltip and accessible name
