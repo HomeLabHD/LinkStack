@@ -27,6 +27,12 @@ class SocialLoginController extends Controller
                 ->redirectUrl($this->callbackUrl($provider))
                 ->user();
 
+            // Restrictions are re-applied on every sign-in rather than only at provisioning,
+            // so removing someone from a group upstream ends their access here too.
+            if ($denied = $this->authorizationError($provider, $social_user)) {
+                return redirect()->route('login')->withErrors($denied);
+            }
+
             $profile = $this->profile($provider, $social_user);
 
             // 1) Primary identity match is the immutable provider subject id (OIDC `sub`),
@@ -39,6 +45,7 @@ class SocialLoginController extends Controller
 
             if ($account) {
                 $this->syncProfile($account->user, $provider, $profile);
+                $this->applyAdminGroup($account->user, $provider, $profile);
                 auth()->login($account->user);
                 $this->rememberSsoSession($provider, $social_user);
 
@@ -96,6 +103,8 @@ class SocialLoginController extends Controller
                 $user->block = env('MANUAL_USER_VERIFICATION') == true ? 'yes' : 'no';
                 $user->save();
             }
+
+            $this->applyAdminGroup($user, $provider, $profile);
 
             // Link the social identity so subsequent logins match on the immutable sub.
             $user->socialAccounts()->create([
@@ -229,6 +238,7 @@ class SocialLoginController extends Controller
                 'name'     => $social_user->getName(),
                 'username' => $social_user->getNickname(),
                 'avatar'   => $social_user->getAvatar(),
+                'groups'   => [],
             ];
         }
 
@@ -246,7 +256,81 @@ class SocialLoginController extends Controller
                 ?: $social_user->getNickname(),
             'avatar'   => $this->claim($raw, $this->listConfig($provider, 'picture_claim', 'picture'))
                 ?: $social_user->getAvatar(),
+            'groups'   => $this->groups($provider, $raw),
         ];
+    }
+
+    /**
+     * Group memberships from whichever claim carries them. A list and a comma-separated
+     * string are both accepted, since providers send both shapes.
+     */
+    protected function groups(string $provider, array $raw): array
+    {
+        foreach ($this->listConfig($provider, 'groups_claim', 'groups') as $name) {
+            $value = $raw[$name] ?? null;
+
+            if (is_array($value)) {
+                return array_values(array_map('strval', array_filter($value, 'is_scalar')));
+            }
+
+            if (is_scalar($value) && (string) $value !== '') {
+                return array_values(array_filter(array_map('trim', explode(',', (string) $value)), static fn ($v) => $v !== ''));
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Who may sign in. Both lists are empty by default, which is no restriction at all;
+     * naming either one turns it into the allow-list for this instance.
+     */
+    protected function authorizationError(string $provider, $social_user): ?string
+    {
+        if (! $this->isOidc($provider)) {
+            return null;
+        }
+
+        $refused = __('messages.Your account is not permitted to sign in to this instance.');
+
+        if ($domains = $this->listConfig($provider, 'allowed_domains', '')) {
+            $email  = (string) $social_user->getEmail();
+            $domain = Str::lower(Str::after($email, '@'));
+
+            if ($email === '' || ! in_array($domain, array_map('strtolower', $domains), true)) {
+                return $refused;
+            }
+        }
+
+        if ($allowed = $this->listConfig($provider, 'allowed_groups', '')) {
+            if (! array_intersect($allowed, $this->groups($provider, $this->rawClaims($social_user)))) {
+                return $refused;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Mirror the instance's admin role onto an identity-provider group when one is named.
+     * Unset — the default — the role stays entirely the instance's own business. Membership
+     * is re-read on every sign-in so a grant can be withdrawn upstream, with the first
+     * account exempt so an instance can never be locked out of its own admin panel.
+     */
+    protected function applyAdminGroup(User $user, string $provider, array $profile): void
+    {
+        $group = (string) config('services.'.$provider.'.admin_group', '');
+
+        if (! $this->isOidc($provider) || $group === '' || (int) $user->id === 1) {
+            return;
+        }
+
+        $role = in_array($group, $profile['groups'], true) ? 'admin' : 'user';
+
+        if ($user->role !== $role) {
+            $user->role = $role;
+            $user->save();
+        }
     }
 
     /**

@@ -84,6 +84,7 @@ return [
         'username_claim' => env('OIDC_USERNAME_CLAIM', 'preferred_username,nickname'),
         'name_claim'     => env('OIDC_NAME_CLAIM', 'name'),
         'picture_claim'  => env('OIDC_PICTURE_CLAIM', 'picture'),
+        'groups_claim'   => env('OIDC_GROUPS_CLAIM', 'groups'),
 
         // ── Provisioning ────────────────────────────────────────────────────────────
         'auto_register'      => filter_var(env('OIDC_AUTO_REGISTER', true), FILTER_VALIDATE_BOOLEAN),
@@ -94,6 +95,14 @@ return [
         'require_verified_email'  => filter_var(env('OIDC_REQUIRE_VERIFIED_EMAIL', true), FILTER_VALIDATE_BOOLEAN),
         'update_profile_on_login' => filter_var(env('OIDC_UPDATE_PROFILE_ON_LOGIN', false), FILTER_VALIDATE_BOOLEAN),
         'require_email'           => filter_var(env('OIDC_REQUIRE_EMAIL', false), FILTER_VALIDATE_BOOLEAN),
+
+        // ── Authorization ───────────────────────────────────────────────────────────
+        // Empty places no restriction; naming either list makes it the allow-list, and it
+        // is re-checked on every sign-in so access can be withdrawn upstream. admin_group
+        // unset leaves the role entirely to the instance.
+        'allowed_groups'  => env('OIDC_ALLOWED_GROUPS', ''),
+        'allowed_domains' => env('OIDC_ALLOWED_DOMAINS', ''),
+        'admin_group'     => env('OIDC_ADMIN_GROUP', ''),
 
         // ── Sign-in flow ────────────────────────────────────────────────────────────
         // auto_launch sends /login straight to the provider; ?local=1 still reaches the
