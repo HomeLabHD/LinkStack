@@ -72,12 +72,14 @@ foreach($pages as $page)
                 </div>
                 @if(env('ENABLE_SOCIAL_LOGIN') == 'true')
                 <p class="text-center my-3">{{__('messages.or sign in with other accounts?')}}</p>
-                {{-- A named provider gets the conventional full-width button; unnamed it stays an
-                     icon in the row below, which is how the built-in providers present. --}}
+                {{-- A named provider gets a button; unnamed it stays an icon in the row below, which
+                     is how the built-in providers present. Wrapper and class mirror the submit button
+                     above — centred and auto-width, not full-bleed, and the same theme colour and
+                     hover. OIDC_BUTTON_CLASS overrides if a theme wants it subordinate. --}}
                 @if(!empty(env('OIDC_CLIENT_ID')) && !empty(env('OIDC_LABEL')))
-                <div class="d-grid my-3">
+                <div class="d-flex justify-content-center my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
-                     class="btn {{ env('OIDC_BUTTON_CLASS', 'btn-secondary') }}"
+                     class="btn {{ env('OIDC_BUTTON_CLASS', 'btn-primary') }}"
                      aria-label="{{ env('OIDC_NAME', 'OpenID Connect') }}">
                     <i class="bi {{ env('OIDC_ICON', 'bi-shield-lock') }} me-1"></i>{{ env('OIDC_LABEL') }}
                   </a>
