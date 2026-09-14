@@ -585,5 +585,5 @@ return array (
   'previous' => '« Предишен',
   'next' => 'Следващия "',
   'or' => 'или',
-  'Sign in with :provider' => 'Вход с :provider',
+  'Sign in with :provider' => 'Влез с :provider',
 );
