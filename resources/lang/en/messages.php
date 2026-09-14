@@ -1142,6 +1142,7 @@ return [
 
 
     // Single sign-on
+    'or' => 'or',
     'Sign in with :provider' => 'Sign in with :provider',
     'Your identity provider did not release an email address.' => 'Your identity provider did not release an email address.',
     'Your email address is not verified with the identity provider.' => 'Your email address is not verified with the identity provider.',

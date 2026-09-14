@@ -84,6 +84,14 @@ foreach($pages as $page)
                      auto-width, same theme colour and hover — rather than becoming one more
                      icon in the row below. --}}
                 @if($oidcEnabled)
+                {{-- Separates the password form from the provider, which otherwise sit flush
+                     against each other. Falls back to plain text where a locale has no
+                     translation yet, so no locale ever renders the raw key. --}}
+                <div class="d-flex align-items-center my-3">
+                  <hr class="flex-grow-1 m-0">
+                  <span class="px-3 text-muted small">{{ Lang::has('messages.or') ? __('messages.or') : 'or' }}</span>
+                  <hr class="flex-grow-1 m-0">
+                </div>
                 <div class="d-flex justify-content-center my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
                      class="btn btn-primary" aria-label="{{ $ssoText }}">
