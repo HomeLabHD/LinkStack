@@ -71,27 +71,30 @@ foreach($pages as $page)
                   <button type="submit" class="btn btn-primary">{{__('messages.Sign In')}}</button>
                 </div>
                 @if(env('ENABLE_SOCIAL_LOGIN') == 'true')
+                @php($oidcName = config('services.openidconnect.display_name'))
+                @php($oidcEnabled = !empty(config('services.openidconnect.client_id')))
+                @php($ssoText = Lang::has('messages.Sign in with :provider')
+                    ? __('messages.Sign in with :provider', ['provider' => $oidcName])
+                    : 'Sign in with '.$oidcName)
+                @php($otherProviders = !empty(env('FACEBOOK_CLIENT_ID')) || !empty(env('TWITTER_CLIENT_ID'))
+                    || !empty(env('GOOGLE_CLIENT_ID')) || !empty(env('GITHUB_CLIENT_ID')))
                 {{-- A named provider is a sign-in route in its own right, so it sits with the
-                     submit button above rather than under the "other accounts" heading, and
-                     mirrors that button exactly: same wrapper, centred and auto-width, same
-                     theme colour and hover. Unnamed, it stays an icon in the row below with
-                     the built-in providers. OIDC_BUTTON_CLASS overrides the class. --}}
-                @if(!empty(env('OIDC_CLIENT_ID')) && !empty(env('OIDC_LABEL')))
+                     submit button above and mirrors it exactly — same wrapper, centred and
+                     auto-width, same theme colour and hover — rather than becoming one more
+                     icon in the row below. --}}
+                @if($oidcEnabled)
                 <div class="d-flex justify-content-center my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
-                     class="btn {{ env('OIDC_BUTTON_CLASS', 'btn-primary') }}"
-                     aria-label="{{ env('OIDC_NAME', 'OpenID Connect') }}">
-                    <i class="bi {{ env('OIDC_ICON', 'bi-shield-lock') }} me-1"></i>{{ env('OIDC_LABEL') }}
+                     class="btn btn-primary" aria-label="{{ $ssoText }}">
+                    <i class="bi bi-shield-lock me-1"></i>{{ $ssoText }}
                   </a>
                 </div>
                 @endif
-                {{-- Heading for the provider icon row. Defaults to the translated string so
-                     every locale keeps upstream's wording; SOCIAL_HEADING replaces it when an
-                     instance wants its own, without overdubbing 14 translation files. --}}
-                @php($socialHeading = env('SOCIAL_HEADING', __('messages.or sign in with other accounts?')))
-                @if(!empty($socialHeading))
-                <p class="text-center my-3">{{ $socialHeading }}</p>
-                @endif
+                {{-- The heading introduces the icon row, so it appears only when that row has
+                     something in it: an instance with single sign-on alone should not be
+                     offered "other accounts" that do not exist. --}}
+                @if($otherProviders)
+                <p class="text-center my-3">{{__('messages.or sign in with other accounts?')}}</p>
                 <div class="d-flex justify-content-center">
                   <ul class="list-group list-group-horizontal list-group-flush">
                     @if(!empty(env('FACEBOOK_CLIENT_ID')))
@@ -122,25 +125,9 @@ foreach($pages as $page)
                       </a>
                     </li>
                     @endif
-                    @if(!empty(env('OIDC_CLIENT_ID')) && empty(env('OIDC_LABEL')))
-                    {{-- Identity providers vary, so the presentation is configurable and every default
-                         reproduces the previous icon-only button:
-                           OIDC_NAME   tooltip and accessible name
-                           OIDC_ICON   Bootstrap Icons class, e.g. bi-key or bi-building
-                           OIDC_LABEL  visible text; empty keeps it icon-only like the other providers --}}
-                    @php($oidcName = env('OIDC_NAME', 'OpenID Connect'))
-                    @php($oidcIcon = env('OIDC_ICON', 'bi-shield-lock'))
-                    @php($oidcLabel = env('OIDC_LABEL'))
-                    <li class="list-group-item border-0 pb-0">
-                      <a href="{{ route('social.redirect','openidconnect') }}"
-                         title="{{ $oidcName }}" aria-label="{{ $oidcName }}">
-                        <i class="bi {{ $oidcIcon }}"></i>
-                        @if(!empty($oidcLabel))<span class="ms-1">{{ $oidcLabel }}</span>@endif
-                      </a>
-                    </li>
-                    @endif
                   </ul>
                 </div>
+                @endif
                 @else
                 <br>
                 @endif

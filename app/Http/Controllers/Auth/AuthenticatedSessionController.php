@@ -32,6 +32,15 @@ class AuthenticatedSessionController extends Controller
         return redirect('/update?finishing');
     }
 
+    // Straight to the provider when this instance signs in only through it, so no one is
+    // shown a form nobody uses. ?local=1 still reaches the form, so local accounts — and
+    // an instance whose provider is down — always keep a way in.
+    if (! $request->has('local')
+        && config('services.openidconnect.auto_launch')
+        && ! empty(config('services.openidconnect.client_id'))) {
+        return redirect()->route('social.redirect', 'openidconnect');
+    }
+
     return view('auth.login');
 }
 
