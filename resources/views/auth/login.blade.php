@@ -71,11 +71,11 @@ foreach($pages as $page)
                   <button type="submit" class="btn btn-primary">{{__('messages.Sign In')}}</button>
                 </div>
                 @if(env('ENABLE_SOCIAL_LOGIN') == 'true')
-                <p class="text-center my-3">{{__('messages.or sign in with other accounts?')}}</p>
-                {{-- A named provider gets a button; unnamed it stays an icon in the row below, which
-                     is how the built-in providers present. Wrapper and class mirror the submit button
-                     above — centred and auto-width, not full-bleed, and the same theme colour and
-                     hover. OIDC_BUTTON_CLASS overrides if a theme wants it subordinate. --}}
+                {{-- A named provider is a sign-in route in its own right, so it sits with the
+                     submit button above rather than under the "other accounts" heading, and
+                     mirrors that button exactly: same wrapper, centred and auto-width, same
+                     theme colour and hover. Unnamed, it stays an icon in the row below with
+                     the built-in providers. OIDC_BUTTON_CLASS overrides the class. --}}
                 @if(!empty(env('OIDC_CLIENT_ID')) && !empty(env('OIDC_LABEL')))
                 <div class="d-flex justify-content-center my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
@@ -84,6 +84,13 @@ foreach($pages as $page)
                     <i class="bi {{ env('OIDC_ICON', 'bi-shield-lock') }} me-1"></i>{{ env('OIDC_LABEL') }}
                   </a>
                 </div>
+                @endif
+                {{-- Heading for the provider icon row. Defaults to the translated string so
+                     every locale keeps upstream's wording; SOCIAL_HEADING replaces it when an
+                     instance wants its own, without overdubbing 14 translation files. --}}
+                @php($socialHeading = env('SOCIAL_HEADING', __('messages.or sign in with other accounts?')))
+                @if(!empty($socialHeading))
+                <p class="text-center my-3">{{ $socialHeading }}</p>
                 @endif
                 <div class="d-flex justify-content-center">
                   <ul class="list-group list-group-horizontal list-group-flush">
