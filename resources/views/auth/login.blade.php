@@ -74,9 +74,7 @@ foreach($pages as $page)
                 @php($oidcName = config('services.openidconnect.display_name'))
                 @php($oidcEnabled = !empty(config('services.openidconnect.client_id')))
                 @php($oidcIcon = config('services.openidconnect.icon'))
-                @php($ssoText = Lang::has('messages.Sign in with :provider')
-                    ? __('messages.Sign in with :provider', ['provider' => $oidcName])
-                    : 'Sign in with '.$oidcName)
+                @php($ssoText = __('messages.Sign in with :provider', ['provider' => $oidcName]))
                 @php($otherProviders = !empty(env('FACEBOOK_CLIENT_ID')) || !empty(env('TWITTER_CLIENT_ID'))
                     || !empty(env('GOOGLE_CLIENT_ID')) || !empty(env('GITHUB_CLIENT_ID')))
                 {{-- A named provider is a sign-in route in its own right, so it sits with the
@@ -85,11 +83,10 @@ foreach($pages as $page)
                      icon in the row below. --}}
                 @if($oidcEnabled)
                 {{-- Separates the password form from the provider, which otherwise sit flush
-                     against each other. Falls back to plain text where a locale has no
-                     translation yet, so no locale ever renders the raw key. --}}
+                     against each other. --}}
                 <div class="d-flex align-items-center my-3">
                   <hr class="flex-grow-1 m-0">
-                  <span class="px-3 text-muted small">{{ Lang::has('messages.or') ? __('messages.or') : 'or' }}</span>
+                  <span class="px-3 text-muted small">{{ __('messages.or') }}</span>
                   <hr class="flex-grow-1 m-0">
                 </div>
                 <div class="d-flex justify-content-center my-3">
