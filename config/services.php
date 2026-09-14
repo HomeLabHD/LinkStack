@@ -61,7 +61,11 @@ return [
         'base_url'                 => env('OIDC_ISSUER'),
         'client_id'                => env('OIDC_CLIENT_ID'),
         'client_secret'            => env('OIDC_CLIENT_SECRET'),
-        'redirect'                 => env('OIDC_REDIRECT_URL', rtrim((string) env('APP_URL'), '/').'/social-auth/openidconnect/callback'),
+        // Deliberately no fallback: SocialLoginController derives the callback from
+        // the request host when this is empty, which is what lets one instance serve
+        // several apexes. Defaulting it to APP_URL makes that derivation unreachable
+        // and sends every visitor back to a single domain.
+        'redirect'                 => env('OIDC_REDIRECT_URL'),
         'scopes'                   => env('OIDC_SCOPES', 'openid profile email'),
         'require_email'            => filter_var(env('OIDC_REQUIRE_EMAIL', false), FILTER_VALIDATE_BOOLEAN),
         'post_logout_redirect_uri' => env('OIDC_POST_LOGOUT_REDIRECT_URL', env('APP_URL')),
