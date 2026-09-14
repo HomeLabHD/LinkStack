@@ -36,6 +36,9 @@ account and writes the initial configuration into the volume — it only appears
 | `LOG_LEVEL` | Apache log verbosity |
 | `PHP_MEMORY_LIMIT` | PHP memory ceiling |
 | `UPLOAD_MAX_FILESIZE` | Largest avatar or background upload accepted |
+| `ALLOWED_HOSTS` | Host header allow-list — required when serving several domains |
+| `ALLOWED_FRAME_ORIGINS` | Origins permitted to embed this instance in a frame |
+| `SESSION_SAME_SITE` | Session cookie policy; `none` is needed to embed across sites |
 
 Set the server name to the hostname users actually reach. LinkStack builds absolute URLs
 from it, so a mismatch shows up as broken links and failed redirects after login.
@@ -63,6 +66,42 @@ Leave `OIDC_REDIRECT_URL` unset and the redirect is derived **per request**, so 
 can serve several apexes and each sends users back to the domain they arrived on. Register
 the callback for every domain with the IdP. Setting `OIDC_REDIRECT_URL` pins a single one
 and disables that behaviour.
+
+Because the callback is derived from the incoming request, every domain you serve must be
+listed in `ALLOWED_HOSTS` — an unlisted host is **rejected with a 400**, not trusted. That
+rejection is the point: it stops a forged `Host` header aiming the authorization redirect
+at somebody else's domain.
+
+```
+ALLOWED_HOSTS=bio.example.com,bio.example.org,bio.example.net
+```
+
+Empty is the single-domain default: the `APP_URL` domain and its subdomains.
+
+## Embedding in a frame
+
+By default no `frame-ancestors` directive is sent and the instance can be embedded by
+anyone. Name the origins allowed to embed it and the restriction is applied, with `'self'`
+always kept:
+
+```
+ALLOWED_FRAME_ORIGINS=https://apps.example.com
+```
+
+Entries are **origins** — scheme, host and optional port. `frame-ancestors` matches on
+origin and ignores any path, so `https://apps.example.com/dashboard` is no narrower than
+the bare origin.
+
+Embedding across sites also needs the session cookie to survive a third-party context:
+
+```
+SESSION_SAME_SITE=none
+```
+
+Without it the frame renders but the visitor appears logged out, because the browser
+withholds a `lax` cookie inside someone else's page. `none` requires a secure cookie, so
+serve over HTTPS. It also removes one layer of CSRF defence-in-depth — the token check
+still applies — so set it only when you are actually embedding.
 
 ## Ports and storage
 
