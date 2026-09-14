@@ -73,6 +73,7 @@ foreach($pages as $page)
                 @if(env('ENABLE_SOCIAL_LOGIN') == 'true')
                 @php($oidcName = config('services.openidconnect.display_name'))
                 @php($oidcEnabled = !empty(config('services.openidconnect.client_id')))
+                @php($oidcIcon = config('services.openidconnect.icon'))
                 @php($ssoText = Lang::has('messages.Sign in with :provider')
                     ? __('messages.Sign in with :provider', ['provider' => $oidcName])
                     : 'Sign in with '.$oidcName)
@@ -86,7 +87,7 @@ foreach($pages as $page)
                 <div class="d-flex justify-content-center my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
                      class="btn btn-primary" aria-label="{{ $ssoText }}">
-                    <i class="bi bi-shield-lock me-1"></i>{{ $ssoText }}
+                    @if(!empty($oidcIcon))<i class="bi {{ $oidcIcon }} me-1"></i>@endif{{ $ssoText }}
                   </a>
                 </div>
                 @endif

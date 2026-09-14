@@ -70,8 +70,10 @@ return [
         'redirect'                 => env('OIDC_REDIRECT_URI'),
         'post_logout_redirect_uri' => env('OIDC_POST_LOGOUT_REDIRECT_URI', env('APP_URL')),
 
-        // Shown on the sign-in button, as "Sign in with {display_name}".
+        // Shown on the sign-in button, as "Sign in with {display_name}". The icon is a
+        // Bootstrap Icons class, as used elsewhere on the page; set it empty for no icon.
         'display_name' => env('OIDC_DISPLAY_NAME', 'OpenID Connect'),
+        'icon'         => env('OIDC_ICON', 'bi-shield-lock'),
 
         // ── Claim mapping ───────────────────────────────────────────────────────────
         // Providers disagree over which claim carries which field, so each accepts a
