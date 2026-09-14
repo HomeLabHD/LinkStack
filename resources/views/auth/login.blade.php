@@ -77,7 +77,7 @@ foreach($pages as $page)
                 @if(!empty(env('OIDC_CLIENT_ID')) && !empty(env('OIDC_LABEL')))
                 <div class="d-grid my-3">
                   <a href="{{ route('social.redirect','openidconnect') }}"
-                     class="btn btn-outline-primary"
+                     class="btn {{ env('OIDC_BUTTON_CLASS', 'btn-secondary') }}"
                      aria-label="{{ env('OIDC_NAME', 'OpenID Connect') }}">
                     <i class="bi {{ env('OIDC_ICON', 'bi-shield-lock') }} me-1"></i>{{ env('OIDC_LABEL') }}
                   </a>
