@@ -103,9 +103,19 @@ foreach($pages as $page)
                     </li>
                     @endif
                     @if(!empty(env('OIDC_CLIENT_ID')))
+                    {{-- Identity providers vary, so the presentation is configurable and every default
+                         reproduces the previous icon-only button:
+                           OIDC_NAME   tooltip and accessible name
+                           OIDC_ICON   Bootstrap Icons class, e.g. bi-key or bi-building
+                           OIDC_LABEL  visible text; empty keeps it icon-only like the other providers --}}
+                    @php($oidcName = env('OIDC_NAME', 'OpenID Connect'))
+                    @php($oidcIcon = env('OIDC_ICON', 'bi-shield-lock'))
+                    @php($oidcLabel = env('OIDC_LABEL'))
                     <li class="list-group-item border-0 pb-0">
-                      <a href="{{ route('social.redirect','openidconnect') }}" title="{{ env('OIDC_NAME', 'OpenID Connect') }}">
-                        <i class="bi bi-shield-lock"></i>
+                      <a href="{{ route('social.redirect','openidconnect') }}"
+                         title="{{ $oidcName }}" aria-label="{{ $oidcName }}">
+                        <i class="bi {{ $oidcIcon }}"></i>
+                        @if(!empty($oidcLabel))<span class="ms-1">{{ $oidcLabel }}</span>@endif
                       </a>
                     </li>
                     @endif
