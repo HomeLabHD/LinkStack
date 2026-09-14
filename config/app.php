@@ -172,7 +172,13 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Laravel\Socialite\SocialiteServiceProvider::class,
+        // Socialite is bound by SocialiteProviders\Manager\ServiceProvider instead, which
+        // extends this one and adds the extendSocialite hook that community drivers
+        // register through. Listing Laravel's provider here binds the plain factory first,
+        // and every added driver then fails with "Driver [...] not supported" — built-in
+        // providers (Google, Facebook, Twitter, GitHub) are unaffected either way, since
+        // the replacement is a superset. Registered automatically via package discovery.
+        // Laravel\Socialite\SocialiteServiceProvider::class,
         App\Providers\LivewireServiceProvider::class,
 
 
