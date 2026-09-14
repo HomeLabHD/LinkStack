@@ -89,7 +89,7 @@ email is adopted, and an address the IdP flags unverified is refused.
 | `OIDC_ALLOWED_DOMAINS` | *(empty)* | Email-domain allow-list |
 | `OIDC_ADMIN_GROUP` | *(empty)* | Members get the admin role; unset leaves roles alone |
 | `OIDC_AUTO_LAUNCH` | `false` | `true` sends `/login` straight to the IdP; `?local=1` still reaches the form |
-| `OIDC_IDP_LOGOUT` | `true` | `false` ends only the local session on sign-out |
+| `OIDC_IDP_LOGOUT` | `false` | `true` also ends the provider session, signing the user out of every application using it |
 
 Both allow-lists and the admin group are re-evaluated on **every** sign-in, not just at
 provisioning, so revoking a group upstream ends access here on the next attempt. The first

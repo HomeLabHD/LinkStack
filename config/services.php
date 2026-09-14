@@ -108,7 +108,10 @@ return [
         // auto_launch sends /login straight to the provider; ?local=1 still reaches the
         // form, so an instance that sets it can never lock out its local accounts.
         'auto_launch' => filter_var(env('OIDC_AUTO_LAUNCH', false), FILTER_VALIDATE_BOOLEAN),
-        'idp_logout'  => filter_var(env('OIDC_IDP_LOGOUT', true), FILTER_VALIDATE_BOOLEAN),
+        // idp_logout ends the provider's session as well, which signs the user out of every
+        // other application relying on it. Off by default: a sign-out here should not reach
+        // beyond here unless an operator asks for it.
+        'idp_logout'  => filter_var(env('OIDC_IDP_LOGOUT', false), FILTER_VALIDATE_BOOLEAN),
     ],
 
 ];
