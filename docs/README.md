@@ -54,17 +54,54 @@ the rest is read from `{OIDC_ISSUER}/.well-known/openid-configuration`.
 | `OIDC_CLIENT_ID` | Client ID from the IdP |
 | `OIDC_CLIENT_SECRET` | Client secret from the IdP |
 | `OIDC_SCOPES` | Requested scopes; defaults to `openid profile email` |
-| `OIDC_REQUIRE_EMAIL` | Refuse logins whose token carries no email |
-| `OIDC_REDIRECT_URL` | Pin one redirect URI instead of deriving it |
-| `OIDC_POST_LOGOUT_REDIRECT_URL` | Where the IdP returns the user after logout |
+| `OIDC_REDIRECT_URI` | Pin one redirect URI instead of deriving it |
+| `OIDC_POST_LOGOUT_REDIRECT_URI` | Where the IdP returns the user after logout |
+| `OIDC_DISPLAY_NAME` | Provider name on the button, as "Sign in with …" |
+| `OIDC_ICON` | Bootstrap Icons class on that button; empty for no icon |
+
+### Claim mapping
+
+Providers disagree over which claim carries which field, so each mapping takes a
+comma-separated list and the first claim actually released wins. Defaults are the standard
+OIDC claims — override only for a provider that differs.
+
+| Variable | Default | Maps to |
+|---|---|---|
+| `OIDC_EMAIL_CLAIM` | `email` | Account email |
+| `OIDC_USERNAME_CLAIM` | `preferred_username,nickname` | Profile slug |
+| `OIDC_NAME_CLAIM` | `name` | Display name, falling back to `given_name`+`family_name` |
+| `OIDC_PICTURE_CLAIM` | `picture` | Avatar |
+| `OIDC_GROUPS_CLAIM` | `groups` | Group membership, for the controls below |
+
+### Provisioning and access
+
+Defaults reproduce how social login already behaved: an unknown user is created, a known
+email is adopted, and an address the IdP flags unverified is refused.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `OIDC_AUTO_REGISTER` | `true` | `false` lets only existing users in |
+| `OIDC_LINK_EXISTING_USER` | `true` | `false` refuses rather than adopts a matching local account |
+| `OIDC_REQUIRE_VERIFIED_EMAIL` | `true` | Refuse when the IdP flags the email unverified |
+| `OIDC_REQUIRE_EMAIL` | `false` | Refuse logins whose token carries no email at all |
+| `OIDC_UPDATE_PROFILE_ON_LOGIN` | `false` | `true` lets the IdP overwrite local profile edits |
+| `OIDC_ALLOWED_GROUPS` | *(empty)* | Allow-list; empty places no restriction |
+| `OIDC_ALLOWED_DOMAINS` | *(empty)* | Email-domain allow-list |
+| `OIDC_ADMIN_GROUP` | *(empty)* | Members get the admin role; unset leaves roles alone |
+| `OIDC_AUTO_LAUNCH` | `false` | `true` sends `/login` straight to the IdP; `?local=1` still reaches the form |
+| `OIDC_IDP_LOGOUT` | `true` | `false` ends only the local session on sign-out |
+
+Both allow-lists and the admin group are re-evaluated on **every** sign-in, not just at
+provisioning, so revoking a group upstream ends access here on the next attempt. The first
+account is exempt from admin demotion, so an instance can never be locked out of its panel.
 
 Register `https://<your-host>/social-auth/openidconnect/callback` as the redirect URI.
 
 ### Serving several domains
 
-Leave `OIDC_REDIRECT_URL` unset and the redirect is derived **per request**, so one instance
+Leave `OIDC_REDIRECT_URI` unset and the redirect is derived **per request**, so one instance
 can serve several apexes and each sends users back to the domain they arrived on. Register
-the callback for every domain with the IdP. Setting `OIDC_REDIRECT_URL` pins a single one
+the callback for every domain with the IdP. Setting `OIDC_REDIRECT_URI` pins a single one
 and disables that behaviour.
 
 Because the callback is derived from the incoming request, every domain you serve must be
