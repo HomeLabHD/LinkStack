@@ -16,7 +16,7 @@
 .rounded-avatar {
   border-radius: 50%;
   -webkit-box-shadow: 0px 0px 0px 3px #ffffff; 
-  box-shadow: 0px 0px 0px 3px #05c165;
+  box-shadow: 0px 0px 0px 3px var(--accent);
   background-color: #ffffff !important;
   width: 200px;
   height: 200px;
@@ -36,10 +36,10 @@
 
 .button {
   position: relative;
-  background-color: transparent;
-  color: var(--accentColor);
-  border: solid var(--accentColor) 2px;
-  border-radius: 5px;
+  background-color: var(--accent-veil);
+  color: var(--accent);
+  border: solid var(--accent) 2px;
+  border-radius: 10px;
   font-size: 1rem;
   text-align: center;
   display: block;
@@ -48,20 +48,22 @@
   margin-bottom: 20px!important;
   padding: 20px;
   text-decoration: none;
-  /* transition: all .25s cubic-bezier(.08, .59, .29, .99); */
+  transition: background-color var(--delay) ease, color var(--delay) ease, border-color var(--delay) ease, transform var(--delay) ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 @media (hover: hover) {
   .button:hover {
-      background-color: var(--accentColor);
-      color: var(--bgColor);
+      background-color: var(--accent);
+      color: var(--ground);
+      border-color: var(--accent-bright);
+      transform: translateY(-1px);
   }
 }
 
 .button:active {
-  background-color: var(--accentColor);
-  color: var(--bgColor);
+  background-color: var(--accent);
+  color: var(--ground);
 }
 
 
@@ -78,14 +80,14 @@
 }
 
 .button:hover > .icon {
-  -webkit-box-shadow: 0px 0px 0px 4px var(--bgColor); 
-  box-shadow: 0px 0px 0px 4px var(--bgColor);
-  background-color: var(--bgColor) !important;
+  -webkit-box-shadow: 0px 0px 0px 4px var(--ground); 
+  box-shadow: 0px 0px 0px 4px var(--ground);
+  background-color: var(--ground) !important;
   border-radius:50%;
   -moz-border-radius:50%;
   -webkit-border-radius:50%;
 }
 
 svg {
-  color: #05c165 !important;
+  color: var(--accent) !important;
 }

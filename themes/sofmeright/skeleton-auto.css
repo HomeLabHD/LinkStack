@@ -65,11 +65,34 @@
     font-size: 100%; }
 
   :root {
-    --bgColor: #842a90;
-    --bgColor2: #301036;
-    --accentColor: #05c165;
+    /* Ground. The eggplant is the field; depth comes from shading it, not from a
+       second hue — the green is the only saturated thing on the page. */
+    --ground: #310937;
+    --ground-deep: #1e0522;
+    --ground-lift: #4a1454;
+    --surface: #3d1145;
+
+    /* Accents. accent is the resting state, bright the active one; soft carries
+       secondary text. highlight is a fill only — it is too dark to read against
+       the ground and must never be used for type. */
+    --accent: #24CC89;
+    --accent-bright: #51F071;
+    --accent-soft: #74ecbe;
+    --accent-muted: #4ACC8F;
+    --highlight: #236144;
+
+    /* A tint of the accent, so a resting button has presence without becoming a card. */
+    --accent-veil: rgba(36, 204, 137, .07);
+
     --font: 'Roboto', sans-serif;
-    --delay: .3s; }
+    --delay: .18s; }
+
+  ::selection { background: var(--highlight); color: var(--accent-soft); }
+  ::-moz-selection { background: var(--highlight); color: var(--accent-soft); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
 
   /* Background
   –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -79,14 +102,17 @@
     padding: 0;
     min-height: 100vh;
     font-family: var(--font);
-    background: linear-gradient(270deg, var(--bgColor) 0%, var(--bgColor2) 80%);
+    background:
+      radial-gradient(1100px 620px at 50% -12%, var(--ground-lift) 0%, transparent 62%),
+      linear-gradient(180deg, var(--ground) 0%, var(--ground-deep) 100%);
+    background-attachment: fixed;
     opacity: 0;
     animation: 1s ease-out var(--delay) 1 transitionAnimation; /* duration/timing-function/delay/iterations/name */
     animation-fill-mode: forwards;
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
-    color: #05c165;
+    color: var(--accent);
   }
 
   
@@ -141,11 +167,11 @@
   /* Links
   –––––––––––––––––––––––––––––––––––––––––––––––––– */
   a {
-    color: #7581cc; 
+    color: var(--accent); 
     text-decoration: none;
   }
   a:hover {
-    color: #c2e9f0; }
+    color: var(--accent-bright); }
   
   .spacing {
     padding: 0 10px;
@@ -159,8 +185,8 @@
     margin: 0 .2rem;
     font-size: 90%;
     white-space: nowrap;
-    background: #F1F1F1;
-    border: 1px solid #E1E1E1;
+    background: var(--surface);
+    border: 1px solid var(--highlight);
     border-radius: 4px; }
   pre > code {
     display: block;
@@ -207,7 +233,7 @@
     margin-top: 3rem;
     margin-bottom: 3.5rem;
     border-width: 0;
-    border-top: 1px solid #E1E1E1; }
+    border-top: 1px solid var(--highlight); }
   
 
   /* ===== Hidden Scrollbar ===== */
@@ -239,7 +265,7 @@
 /* Switches text color for credit footer for dark/light mode */
 
  .credit-txt-clr{
-     color: #05c165 !important;
+     color: var(--accent) !important;
 }
 
 

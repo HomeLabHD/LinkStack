@@ -52,10 +52,10 @@
     line-height: 48px;
     letter-spacing: 0.1px;
     white-space: wrap;
-    border: solid var(--accentColor) 2px;
+    border: solid var(--accent) 2px;
     border-radius: 10px;
     cursor: pointer;
-    color: #05c165; 
+    color: var(--accent); 
     background-color: transparent;
    }
    
@@ -73,10 +73,10 @@
     line-height: 48px;
     letter-spacing: 0.1px;
     white-space: wrap;
-    border: solid var(--accentColor) 2px;
+    border: solid var(--accent) 2px;
     border-radius: 10px;
     cursor: pointer;
-    color: #05c165; 
+    color: var(--accent); 
     background-color: transparent;
    }
    .sharebutton-img {
@@ -88,8 +88,8 @@
 }
 sharebutton:hover,
 .sharebutton:hover {
-  color: #842a90;
-  background-color: #05c165; 
+  color: var(--ground-lift);
+  background-color: var(--accent); 
 }
 .sharebutton:hover .share-icon {
   -webkit-filter: invert(100%);
