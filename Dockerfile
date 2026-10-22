@@ -29,7 +29,7 @@ RUN composer install \
  && rm -rf /app/.git /app/.docker /app/Dockerfile /app/.dockerignore
 
 # ---- Stage 2: Runtime --------------------------------------------------------------
-FROM alpine:3.24.1
+FROM alpine:3.24.3
 
 LABEL org.opencontainers.image.title="LinkStack" \
       org.opencontainers.image.description="LinkStack (HomeLabHD fork) — Alpine/Apache/PHP, non-root, with generic OIDC SSO." \
