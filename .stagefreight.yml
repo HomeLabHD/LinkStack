@@ -32,6 +32,15 @@ dependency:
     - id: GHSA-w5hq-g745-h8pq
       reason: uuid buffer-bounds (v3/v5/v6 with buf) — npm build-tool transitive, absent from the runtime image; fix needs uuid 8->11 major
       until: "2026-12-01"
+    - id: GHSA-g84c-rxfj-3j2c
+      reason: webpack-dev-middleware path traversal — dev server under laravel-mix, absent from the runtime image; fixed only in 8.x, which laravel-mix 6 cannot take
+      until: "2026-12-01"
+    - id: GHSA-86w9-cpqp-85rv
+      reason: node-forge RSA signature check — via selfsigned under webpack-dev-server, absent from the runtime image; no fixed release
+      until: "2026-12-01"
+    - id: GHSA-vfj7-8cjw-p6xm
+      reason: braces nested-pattern DoS — file-watcher glob under laravel-mix, absent from the runtime image; no fixed release
+      until: "2026-12-01"
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/dependency.yml
 commit:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/commit.yml
