@@ -1,0 +1,9 @@
+upstream:
+  sources:
+    upstream:
+      fork_parent: github-mirror
+  sync:
+    from: upstream
+    onto: head
+    strategy: merge
+    on_conflict: notify
