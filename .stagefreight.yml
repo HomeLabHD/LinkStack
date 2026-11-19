@@ -63,7 +63,6 @@ metadata:
   description:
     - Self-hosted link-in-bio page — showcase all your links on your own server.
     - Container image for LinkStack, the self-hosted link-in-bio / personal-profile platform (Laravel), built on Alpine + Apache + PHP 8.3 as the non-root apache user, with generic OpenID Connect SSO against any discovery-based issuer.
-  license: AGPL-3.0
   org: HomeLabHD
   title: LinkStack
   topics:

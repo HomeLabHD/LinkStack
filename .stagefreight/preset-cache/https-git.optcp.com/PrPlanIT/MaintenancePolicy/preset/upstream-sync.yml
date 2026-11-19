@@ -3,7 +3,6 @@ upstream:
     upstream:
       fork_parent: github-mirror
   sync:
-    from: upstream
     branch: HEAD
     strategy: merge
     on_conflict: notify
