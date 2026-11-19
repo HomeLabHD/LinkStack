@@ -4,6 +4,6 @@ upstream:
       fork_parent: github-mirror
   sync:
     from: upstream
-    onto: head
+    branch: HEAD
     strategy: merge
     on_conflict: notify

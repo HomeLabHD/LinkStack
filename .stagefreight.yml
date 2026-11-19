@@ -119,5 +119,4 @@ toolchains:
 upstream:
   preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/upstream-sync.yml
   sync:
-    onto:
-      branch: beta
+    branch: beta
